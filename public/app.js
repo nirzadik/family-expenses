@@ -165,6 +165,16 @@
       yearSelect.appendChild(option);
     }
   }
+  
+/**
+ * 
+ * function by chatgpt that gets
+ * the selected type from the radio buttons
+ */
+  function getSelectedType() {
+  const checked = typeSelect.querySelector('input[type="radio"]:checked');
+  return checked ? checked.value : '';
+}
 
   /**
    * Populate the analysis month selector inside the analytics modal.  Uses
@@ -435,7 +445,8 @@
         // Initialize selectors
         populateMonthSelect();
         populateYearSelect();
-        populateKindSelect(typeSelect.value || '');
+        const checkedType = typeSelect.querySelector('input[type="radio"]:checked');
+        populateKindSelect(checkedType ? checkedType.value : '');
         initializePeriod();
     onAuthStateChanged(auth, user => {
       if (user && user.email && EMAIL_WHITELIST.includes(user.email.toLowerCase())) {
@@ -446,7 +457,8 @@
         // Initialize selectors
         populateMonthSelect();
         populateYearSelect();
-        populateKindSelect(typeSelect.value || '');
+        const checkedType = typeSelect.querySelector('input[type="radio"]:checked');
+        populateKindSelect(checkedType ? checkedType.value : '');
         initializePeriod();
         // Ensure analytics modal is closed on login
         analyticsModal.classList.add('hidden');
@@ -716,8 +728,15 @@
     loginButton.addEventListener('click', doLogin);
     logoutButton.addEventListener('click', doLogout);
     typeSelect.addEventListener('change', () => {
-      populateKindSelect(typeSelect.value);
+      populateKindSelect(getSelectedType());
       validateForm();
+      });
+    const typeRadios = typeSelect.querySelectorAll('input[type="radio"]');
+    typeRadios.forEach(radio => {
+      radio.addEventListener('change', () => {
+        populateKindSelect(getSelectedType());
+        validateForm();
+      });
     });
     nameSelect.addEventListener('change', validateForm);
     kindSelect.addEventListener('change', validateForm);
