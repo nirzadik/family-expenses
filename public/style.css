@@ -1,68 +1,683 @@
-body {
-  font-family: Arial, sans-serif;
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 0 10px;
-}
-
-h1, h2 {
-  text-align: center;
-}
-
-#auth-section {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-form {
+.period-selector {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  flex-direction: row;
+  align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
+  gap: 2.5rem;
+  padding: 1.2rem 0 1.2rem 0;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+.period-pair {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+.period-pair label {
+  font-size: 1.05rem;
+  font-weight: 500;
+  /* removed: color: var(--primary-color); */
+  letter-spacing: 0.01em;
+}
+.period-pair select {
+  border-radius: 999px;
+  border: 2px solid var(--primary-color);
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background: #fff;
+  color: var(--text-color);
+  min-width: 120px;
+  min-height: 44px;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  box-shadow: 0 1px 4px rgba(127,147,208,0.07);
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+}
+.period-pair select:focus {
+  border-color: var(--secondary-color);
+  box-shadow: 0 2px 8px rgba(242,138,178,0.10);
+}
+.period-pair select option {
+  background: #f8eaf5;
+  color: var(--text-color);
+  font-size: 1rem;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+}
+@media (max-width: 700px) {
+  .period-selector {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+  }
+  .period-pair select {
+    min-width: 90vw;
+    width: 100%;
+  }
+}
+/* --- New Era App-wide Centering and Modern Look --- */
+body, html {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #eaf0fb 0%, #f8eaf5 100%);
 }
 
-input, select, button {
-  padding: 8px;
-  font-size: 16px;
+#app, #login-section {
+  margin: 2rem auto;
+  width: 100%;
+  max-width: 540px;
+  background: var(--card-bg);
+  border-radius: 32px;
+  box-shadow: 0 8px 32px rgba(127,147,208,0.10), 0 1.5px 8px rgba(242,138,178,0.08);
+  padding: 2.5rem 2rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-ul {
-  list-style: none;
+.app-header, .period-selector, .overview, .transaction-form, .transaction-list, .analytics-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card {
+  border-radius: 24px;
+  box-shadow: 0 2px 12px rgba(127,147,208,0.10);
+  transition: box-shadow 0.18s, transform 0.18s;
+  background: linear-gradient(120deg, #eaf0fb 0%, #f8eaf5 100%);
+}
+.card:hover {
+  box-shadow: 0 8px 32px rgba(127,147,208,0.18);
+  transform: translateY(-4px) scale(1.03);
+}
+
+.overview-values div {
+  border-radius: 12px;
+  padding: 0.25rem 0.75rem;
+  background: #fff8fa;
+  margin-bottom: 0.25rem;
+  transition: background 0.18s, box-shadow 0.18s;
+}
+.overview-values div:hover {
+  background: #f8eaf5;
+  box-shadow: 0 2px 8px rgba(242,138,178,0.10);
+}
+
+.transaction-list .table-wrapper {
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(127,147,208,0.10);
+  background: #fff;
+}
+.transaction-list table {
+  border-radius: 18px;
+  overflow: hidden;
+  background: #fff;
+}
+.transaction-list th, .transaction-list td {
+  border-radius: 0;
+  transition: background 0.18s, color 0.18s;
+}
+.transaction-list tbody tr:hover {
+  background: #f8eaf5;
+  /* removed: color: var(--primary-color); */
+}
+
+.modal-content {
+  border-radius: 32px;
+  box-shadow: 0 8px 32px rgba(127,147,208,0.10), 0 1.5px 8px rgba(242,138,178,0.08);
+  background: linear-gradient(120deg, #eaf0fb 0%, #f8eaf5 100%);
+}
+
+.comparison-card {
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(127,147,208,0.10);
+  transition: box-shadow 0.18s, transform 0.18s;
+}
+.comparison-card:hover {
+  box-shadow: 0 8px 32px rgba(127,147,208,0.18);
+  transform: translateY(-4px) scale(1.03);
+}
+
+.analytics-section {
+  margin-top: 1.5rem;
+}
+
+/* Responsive tweaks for new era design */
+@media (max-width: 700px) {
+  #app, #login-section {
+    max-width: 98vw;
+    padding: 1.2rem 0.5rem;
+  }
+}
+/* --- New Era Toggle Button Styles --- */
+.toggle-group {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.toggle-btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid var(--primary-color);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--text-color);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: box-shadow 0.18s cubic-bezier(.4,2,.6,1), border-color 0.18s, transform 0.18s;
+  box-shadow: 0 1px 4px rgba(127,147,208,0.07);
+  position: relative;
+  outline: none;
+  user-select: none;
+}
+
+.toggle-btn:hover {
+  box-shadow: 0 4px 16px rgba(127,147,208,0.18);
+  transform: translateY(-3px) scale(1.04);
+  border-color: var(--secondary-color);
+  z-index: 2;
+}
+
+.toggle-group input[type="radio"]:checked + .toggle-btn {
+  border-width: 3px;
+  border-color: var(--primary-color);
+  background: linear-gradient(90deg, #eaf0fb 0%, #f8eaf5 100%);
+  color: var(--primary-color);
+  box-shadow: 0 2px 8px rgba(127,147,208,0.18);
+  font-weight: 700;
+}
+
+/* Hide the radio visually but keep it accessible */
+.toggle-group input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* --- Styled select and input for consistency --- */
+.styled-select {
+  border-radius: 999px;
+  border: 2px solid var(--primary-color);
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background: #fff;
+  transition: border-color 0.18s;
+}
+.styled-select:focus {
+  border-color: var(--secondary-color);
+  outline: none;
+}
+
+.styled-input {
+  border-radius: 999px;
+  border: 2px solid var(--primary-color);
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background: #fff;
+  transition: border-color 0.18s;
+}
+.styled-input:focus {
+  border-color: var(--secondary-color);
+  outline: none;
+}
+
+.styled-btn {
+  border-radius: 999px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(127,147,208,0.10);
+  transition: box-shadow 0.18s, background 0.18s;
+}
+.styled-btn:hover:not(:disabled) {
+  box-shadow: 0 4px 16px rgba(127,147,208,0.18);
+  background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+/*
+  Stylesheet for the Family Expenses web application.
+  This file defines the overall look and feel of the app, including
+  responsive layout, form styling, table layout and modal overlay.  The
+  design follows the acceptance criteria defined in the PRD: mobile
+  responsiveness, accessible controls (minimum 44px targets) and clear
+  separation of content areas. Colors are kept simple and neutral with
+  accent tones for primary and secondary actions.  Feel free to tweak
+  variables or add your own classes for further customization.
+*/
+
+:root {
+  /* Pastel color palette for a soft, modern feel */
+  --primary-color: #7f93d0;      /* pastel blue for primary actions */
+  --secondary-color: #f28ab2;    /* pastel pink for secondary actions */
+  --text-color: #374151;         /* dark grey for body text */
+  --bg-color: #f9fafc;           /* very light grey background */
+  --card-bg: #ffffff;            /* white for cards */
+  --error-color: #e26d5c;        /* soft red for error messages */
+  --success-color: #4bbf6b;      /* pastel green for success messages */
+  --info-color: #6b7280;         /* muted grey for informational text */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
   padding: 0;
 }
 
-li {
-  margin: 5px 0;
-  padding: 6px;
-  border-radius: 4px;
-  font-weight: bold;
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.5;
+  min-height: 100vh;
 }
 
-table {
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Center the main application container and constrain its width */
+#app {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.center {
+  max-width: 480px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  min-width: 120px;
+  min-height: 44px; /* meet tap target requirements */
+}
+
+.btn.primary {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+
+.btn.secondary {
+  background-color: var(--secondary-color);
+  color: #ffffff;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Header */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2%;
+  background-color: var(--card-bg);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.app-header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Period selector */
+
+/* --- New Era Period Selector --- */
+.period-selector {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  padding: 1.2rem 0 1.2rem 0;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+.period-selector label {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--primary-color);
+  margin-right: 0.5rem;
+  letter-spacing: 0.01em;
+}
+.period-selector select {
+  border-radius: 999px;
+  border: 2px solid var(--primary-color);
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background: #fff;
+  color: var(--text-color);
+  min-width: 120px;
+  min-height: 44px;
+  margin-right: 0.5rem;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  box-shadow: 0 1px 4px rgba(127,147,208,0.07);
+}
+.period-selector select:focus {
+  border-color: var(--secondary-color);
+  outline: none;
+  box-shadow: 0 2px 8px rgba(242,138,178,0.10);
+}
+@media (max-width: 700px) {
+  .period-selector {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+  }
+  .period-selector select {
+    min-width: 90vw;
+    width: 100%;
+  }
+}
+
+/* Overview cards */
+.overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  padding: 1rem 2%;
+}
+
+.card {
+  background-color: var(--card-bg);
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.card h2 {
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.overview-values div {
+  margin-bottom: 0.25rem;
+  font-size: 0.95rem;
+}
+
+/* Transaction form */
+.transaction-form {
+  padding: 1rem 2%;
+}
+
+.transaction-form h2 {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.75rem;
+}
+
+.form-group label {
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.form-group select,
+.form-group input {
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  min-height: 44px;
+}
+
+.form-actions {
+  text-align: right;
+  margin-top: 0.5rem;
+}
+
+.error-message {
+  color: var(--error-color);
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.success-message {
+  color: var(--success-color);
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+}
+
+/* Transaction list */
+.transaction-list {
+  padding: 1rem 2%;
+}
+
+.transaction-list h2 {
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.transaction-list .table-wrapper {
+  overflow-x: auto;
+}
+
+.transaction-list table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 20px;
+  min-width: 480px;
 }
 
-table, th, td {
-  border: 1px solid #ccc;
+.transaction-list th,
+.transaction-list td {
+  padding: 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.9rem;
 }
 
-th, td {
-  padding: 8px;
+.transaction-list th {
+  background-color: var(--card-bg);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.transaction-list tbody tr:nth-child(even) {
+  background-color: #f1f5f9;
+}
+
+.transaction-list .info-message {
+  color: var(--info-color);
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Color-code amounts in the transaction table by type */
+.expense-amount {
+  color: #e26d5c !important; /* pastel red */
+  font-weight: 500;
+  transition: color 0.18s;
+}
+.income-amount {
+  color: #4bbf6b !important; /* pastel green */
+  font-weight: 500;
+  transition: color 0.18s;
+}
+  /* Removed duplicate rules for .expense-amount and .income-amount */
+  /* Ensure only the correct pastel color rules remain */
+
+/* Analytics section */
+.analytics-section {
+  padding: 1rem 2%;
   text-align: center;
 }
 
-#month-filter {
+/* Modal overlay */
+
+
+.modal-content {
+  background-color: var(--card-bg);
+  width: 90%;
+  max-width: 800px;
+  padding: 1.5rem;
+  border-radius: 12px;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-content h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.modal-content h3 {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  gap: 10px;
   justify-content: center;
-  margin-bottom: 10px;
+  align-items: center;
+  z-index: 1000;
 }
 
-#monthly-summary {
-  text-align: center;
-  font-weight: bold;
-  font-size: 18px;
+.hidden {
+  display: none !important;
+}
+
+.modal-content {
+  background-color: var(--card-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--text-color);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  z-index: 1001;
+}
+
+.close-btn:hover {
+  color: var(--primary-color);
+}
+
+/* Comparison cards */
+.comparison-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.comparison-card {
+  background-color: var(--bg-color);
+  padding: 0.75rem;
+  border-radius: 10px;
+  flex: 1 1 calc(33% - 1rem);
+  min-width: 200px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.comparison-card h4 {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.comparison-card .amount {
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Selector for choosing analysis period in the modal */
+.analysis-period-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.analysis-period-selector label {
+  margin-right: 0.25rem;
+}
+
+.analysis-period-selector select {
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  min-height: 44px;
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .overview {
+    grid-template-columns: 1fr;
+  }
+  .comparison-card {
+    flex: 1 1 100%;
+  }
+  .transaction-list table {
+    min-width: 100%;
+  }
 }

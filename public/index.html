@@ -1,67 +1,215 @@
 <!DOCTYPE html>
-<html lang="he">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Family Expenses Dashboard</title>
+  <title>Family Expenses</title>
+  <!-- Link to the stylesheet -->
   <link rel="stylesheet" href="style.css">
 
-  <!-- Firebase SDKs -->
-  <script defer src="/__/firebase/12.4.0/firebase-app-compat.js"></script>
-  <script defer src="/__/firebase/12.4.0/firebase-auth-compat.js"></script>
-  <script defer src="/__/firebase/12.4.0/firebase-firestore-compat.js"></script>
-  <script defer src="/__/firebase/init.js"></script>
+  <!-- Firebase SDK imports.  The version numbers come from the most recent
+       Firebase JS release notes at the time of writing (v12.x in late 2025)【317234986955379†L220-L235】.  
+       Using explicit versions helps ensure long‑term reproducibility.  Replace
+       the configuration values below with your own project settings from the
+       Firebase console. -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      signInWithPopup,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      serverTimestamp,
+      query,
+      where,
+      orderBy,
+      onSnapshot,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
+    // TODO: Replace the following with your app's Firebase project configuration.
+    // See: https://firebase.google.com/docs/web/learn-more#config-object
+  const firebaseConfig = {
+    apiKey: "AIzaSyBqIaEZJjzrJxKjw3aY-FoNxXArA-BmBHY",
+    authDomain: "family-expenses-e2b55.firebaseapp.com",
+    projectId: "family-expenses-e2b55",
+    storageBucket: "family-expenses-e2b55.firebasestorage.app",
+    messagingSenderId: "959661292701",
+    appId: "1:959661292701:web:ad25cfdddfe89ef1e72874"
+  };
+
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Expose instances and helpers to window so that app.js can access them
+    window._firebase = { app, auth, db };
+    window._firebaseImports = {
+      GoogleAuthProvider,
+      signInWithPopup,
+      onAuthStateChanged,
+      signOut,
+      collection,
+      addDoc,
+      serverTimestamp,
+      query,
+      where,
+      orderBy,
+      onSnapshot,
+      getDocs
+    };
+  </script>
 </head>
 <body>
-  <h1>הוצאות משפחתיות</h1>
-
-  <!-- Authentication -->
-  <div id="auth-section">
-    <button id="login-btn">כניסה עם Gmail</button>
-    <span id="user-email"></span>
+  <!-- Login section shown before authentication -->
+  <div id="login-section" class="center">
+    <h1>Family Expenses</h1>
+    <p>Please sign in with your Google account to continue.</p>
+    <button id="login-button" class="btn primary">Sign in with Google</button>
+    <p id="login-error" class="error-message hidden"></p>
   </div>
 
-  <!-- טופס להוספת הוצאה -->
-  <form id="expense-form">
-    <input type="text" id="description" placeholder="פירוט הוצאה" required>
-    <input type="number" id="amount" placeholder="סכום" required>
-    <select id="category">
-      <option value="food">אוכל</option>
-      <option value="bills">חשבונות</option>
-      <option value="transport">תחבורה</option>
-      <option value="other">אחר</option>
-    </select>
-    <button type="submit">הוסף</button>
-  </form>
+  <!-- Main application container hidden until the user is authenticated -->
+  <div id="app" class="hidden">
+    <header class="app-header">
+      <h1 id="current-period">—</h1>
+      <div class="user-info">
+        <span id="user-name"></span>
+        <button id="logout-button" class="btn secondary">Logout</button>
+      </div>
+    </header>
 
-  <!-- סיכום הוצאות לפי משתמש -->
-  <h2>סיכום הוצאות לפי משתמש</h2>
-  <ul id="user-summary-list"></ul>
+    <!-- Month and Year selector -->
+    <section class="period-selector">
+      <div class="period-pair">
+        <label for="month-select">Month:</label>
+        <select id="month-select"></select>
+      </div>
+      <div class="period-pair">
+        <label for="year-select">Year:</label>
+        <select id="year-select"></select>
+      </div>
+    </section>
 
-  <!-- רשימת ההוצאות -->
-  <h2>רשימת כל ההוצאות</h2>
-  <table id="expenses-table">
-    <thead>
-      <tr>
-        <th>מי הוציא</th>
-        <th>תאריך</th>
-        <th>סוג הוצאה</th>
-        <th>סכום</th>
-        <th>פירוט</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+    <!-- Overview totals -->
+    <section class="overview">
+      <div class="card">
+        <h2>Total Expenses</h2>
+        <div class="overview-values">
+          <div>Nir: <span id="nir-expense">₪0.00</span></div>
+          <div>Dana: <span id="dana-expense">₪0.00</span></div>
+          <div>Total: <span id="total-expense">₪0.00</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Total Incomes</h2>
+        <div class="overview-values">
+          <div>Nir: <span id="nir-income">₪0.00</span></div>
+          <div>Dana: <span id="dana-income">₪0.00</span></div>
+          <div>Total: <span id="total-income">₪0.00</span></div>
+        </div>
+      </div>
+    </section>
 
-  <!-- סיכום לפי חודש ושנה -->
-  <h2>סיכום לפי חודש ושנה</h2>
-  <div id="month-filter">
-    <label>חודש: <input type="number" id="month-input" min="1" max="12"></label>
-    <label>שנה: <input type="number" id="year-input" min="2000"></label>
-    <button id="filter-btn">עדכן</button>
+    <!-- Transaction form for entering new expenses/incomes -->
+    <section class="transaction-form">
+      <h2>Add Transaction</h2>
+      <form id="transaction-form">
+        <div class="form-group">
+          <label>Name</label>
+          <div id="name-select" class="toggle-group" role="radiogroup">
+            <input type="radio" name="name-select" value="Nir" id="name-nir" required hidden>
+            <label for="name-nir" class="toggle-btn">Nir</label>
+            <input type="radio" name="name-select" value="Dana" id="name-dana" hidden>
+            <label for="name-dana" class="toggle-btn">Dana</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <div id="type-select" class="toggle-group" role="radiogroup">
+            <input type="radio" name="type-select" value="Expense" id="type-expense" required hidden>
+            <label for="type-expense" class="toggle-btn">Expense</label>
+            <input type="radio" name="type-select" value="Income" id="type-income" hidden>
+            <label for="type-income" class="toggle-btn">Income</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="kind-select">Category</label>
+          <select id="kind-select" class="styled-select" required></select>
+        </div>
+        <div class="form-group">
+          <label for="amount-input">Amount</label>
+          <input type="number" id="amount-input" class="styled-input" min="0.01" step="0.01" required placeholder="0.00" />
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn primary styled-btn" id="submit-button" disabled>Add</button>
+        </div>
+        <p id="form-error" class="error-message hidden"></p>
+        <p id="form-success" class="success-message hidden"></p>
+      </form>
+    </section>
+
+    <!-- Transaction list table -->
+    <section class="transaction-list">
+      <h2>Transactions</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Category</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody id="transactions-table-body"></tbody>
+        </table>
+      </div>
+      <p id="no-transactions" class="info-message hidden">No transactions found for this period.</p>
+    </section>
+
+    <!-- Extended analytics button -->
+    <section class="analytics-section">
+      <button id="open-analytics" class="btn secondary">Further Information</button>
+    </section>
+
+    <!-- Analytics modal overlay -->
+    <div id="analytics-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <button class="close-btn" id="close-analytics">×</button>
+        <h2>Extended Financial Analysis</h2>
+
+        <!-- Analysis period selector inside the modal -->
+        <div class="analysis-period-selector">
+          <label for="analysis-month-select">Month:</label>
+          <select id="analysis-month-select"></select>
+          <label for="analysis-year-select">Year:</label>
+          <select id="analysis-year-select"></select>
+        </div>
+        <section class="comparison-section">
+          <h3>Last 3 Months Comparison</h3>
+          <div id="comparison-cards" class="comparison-cards"></div>
+        </section>
+        <section class="chart-section">
+          <h3>Expense Trends by Category</h3>
+          <canvas id="expense-trends-chart"></canvas>
+        </section>
+      </div>
+    </div>
   </div>
-  <p id="monthly-summary">₪0</p>
 
-  <script src="app.js"></script>
+  <!-- Chart.js for rendering graphs (v4.5.0 as of 2025)【361731937300790†L0-L5】 -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Application logic -->
+  <script type="module" src="app.js"></script>
 </body>
 </html>
