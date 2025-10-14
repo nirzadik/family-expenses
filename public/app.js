@@ -28,7 +28,7 @@
 
   // Email whitelist for authorized users. Update these addresses to match
   // those configured in your Firebase project rules.
-  const EMAIL_WHITELIST = ['nirzzadik@gmail.com', 'danakatz6113@gmail.com'];
+  const EMAIL_WHITELIST = ['nirzzadik@gmail.com', 'danakatz6113@gmail.com', 'itayzadik10@gmail.com', 'zadikerez@gmail.com'];
 
   // Define category lists for expenses and incomes.  These lists are based
   // on the PRD and can be modified to suit your needs.
