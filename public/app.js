@@ -42,7 +42,15 @@
     'Waste',
     'Home Equipment',
     'Sports',
-    'One-Time Expenses'
+    'One-Time Expenses',
+    'Fuel',
+    'Car Maintenance',
+    'Medical',
+    'Insurance',
+    'Dates',
+    'Travel',
+    'Ginny',
+    'Other'
   ];
   const incomeCategories = [
     'Salary',
