@@ -49,8 +49,7 @@
     'Insurance',
     'Dates',
     'Travel',
-    'Ginny',
-    'Other'
+    'Ginny'
   ];
   const incomeCategories = [
     'Salary',
